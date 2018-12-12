@@ -40,7 +40,7 @@ int main()
 	}	
         printf("input:");
 		
-	scanf("%s",msg);
+	gets("%s",msg);
 	
 	strcat(((message*)shmp)->text,msg);
 	printf("msg:%s,len:%ld\n",((message*)shmp)->text,strlen(((message*)shmp)->text));		
