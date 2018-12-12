@@ -42,7 +42,7 @@ int main()
 		
 	scanf("%s",msg);
 	
-     /*	if(strlen(((message*)shmp)->text)+strlen(msg)>=MAX_SIZE){
+     if(strlen(((message*)shmp)->text)+strlen(msg)>=MAX_SIZE){
 		printf("buffer is full! please wait!\n");
 		int len=MAX_SIZE-strlen(((message*)shmp)->text);
 		if(strlen(msg)>MAX_SIZE){
@@ -64,7 +64,7 @@ int main()
 			sem_wait(sem_send);
 		}
 		
-	}*/
+     }
 	
 		strcat(((message*)shmp)->text,msg);
 		printf("msg:%s,len:%ld\n",((message*)shmp)->text,strlen(((message*)shmp)->text));		
