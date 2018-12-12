@@ -15,7 +15,7 @@ int main()
 {
     // init
 	char msg[512];
-	char msgBuf[512];
+	
 	strcpy(msg,"");
     	int shmid = shmget(key, sizeof(message), 0666 | IPC_CREAT);
 	check_error(shmid);
