@@ -73,7 +73,7 @@ int main()
 	sem_post(sem_send);
     }
 
-	sem_unlink(name);
+	sem_(name);
 
     	shmctl(shmid, IPC_RMID, shmp);
     	printf("sender end\n");
