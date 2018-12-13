@@ -61,13 +61,14 @@ void wait_child(pid_t pid,int * status){
 }
 
 #define name1 "mutex"
-
+#define name2 "count"
 int main(){
     pid_t pid1, pid2, pid3;
     int fd[2];
     int err;
     int status=-1;
     sem_t *mutex = sem_open(name1, O_CREAT, 0666, 1);
+    sem_t *count = sem_open(name1, O_CREAT, 0666, 1);
 
     err = pipe(fd);
     check_error(err);
@@ -80,6 +81,7 @@ int main(){
 	printf("on child 1,pid:%d\n",getpid());
         write_to_pipe1(fd[1]);
         sem_post(mutex);
+	sem_post(count);
         return 0;
     }
 
@@ -91,6 +93,7 @@ int main(){
 	printf("on child 2,pid:%d\n",getpid());
         write_to_pipe2(fd[1]);
         sem_post(mutex);
+	sem_post(count);
         return 0;
     }
 
@@ -102,13 +105,14 @@ int main(){
 	printf("on child 3,pid:%d\n",getpid());
         write_to_pipe3(fd[1]);
         sem_post(mutex);
+	sem_post(count);
         return 0;
     }
     wait_child(pid1,&status);
     wait_child(pid2,&status);
     wait_child(pid3,&status);
     
-
+    sem_wait(count);
     read_from_pipe(fd[0]);
 
     sem_unlink(name1);
