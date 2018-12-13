@@ -37,10 +37,6 @@ int main()
 		if(strcmp(msg,"")!=0){
 			printf("receive is : %s\n", msg);
 			printf("len=%ld\n",strlen(msg));	
-			if(strlen(msg)==MAX_SIZE){
-				printf("buf is full");
-				sem_post(sem_send);			
-			}
 			strcpy(((message*)shmp)->text,"");
 		}
 	}
