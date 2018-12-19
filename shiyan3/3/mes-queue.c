@@ -164,7 +164,7 @@ int main(void)
     sem_init(&final_rec_2, 0, 0);
 
     
-   id = msgget(0, 0666);
+   id = msgget(0, IPC_CREAT|0666);
    if (id < 0) {
      printf("msgqueue build error\n");
      return 0;
