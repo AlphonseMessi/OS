@@ -18,8 +18,8 @@ int main()
     int shmid = shmget(key, sizeof(message), IPC_CREAT | 0666);
     check_error(shmid);
     void *shmp = shmat(shmid, NULL, 0);
-    sem_send = sem_open(name, O_CREAT, 0666, 1);
-    sem_recive = sem_open(name, O_CREAT, 0666, 1);
+    sem_send = sem_open(name1, O_CREAT, 0666, 1);
+    sem_recive = sem_open(name2, O_CREAT, 0666, 1);
     int i; 
     if(sem_getvalue(sem_recive,&i)==0){
 		while(i>2)
