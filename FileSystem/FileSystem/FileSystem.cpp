@@ -1,4 +1,4 @@
-// FileSystem.cpp: ¶¨Òå¿ØÖÆÌ¨Ó¦ÓÃ³ÌĞòµÄÈë¿Úµã¡£
+// FileSystem.cpp: å®šä¹‰æ§åˆ¶å°åº”ç”¨ç¨‹åºçš„å…¥å£ç‚¹ã€‚
 //
 #define _CRT_SECURE_NO_WARNINGS
 #include "stdafx.h"
@@ -30,26 +30,26 @@ typedef struct FAT {
 } fat;
 
 typedef struct FCB {
-	char free; // ´ËfcbÊÇ·ñÒÑ±»É¾³ı£¬ÒòÎª°ÑÒ»¸öfcb´Ó´ÅÅÌ¿éÉÏÉ¾³ıÊÇºÜ·ÑÊÂµÄ£¬ËùÒÔÑ¡ÔñÀûÓÃfcbµÄfree±êºÅÀ´±ê¼ÇÆäÊÇ·ñ±»É¾³ı
+	char free; // æ­¤fcbæ˜¯å¦å·²è¢«åˆ é™¤ï¼Œå› ä¸ºæŠŠä¸€ä¸ªfcbä»ç£ç›˜å—ä¸Šåˆ é™¤æ˜¯å¾ˆè´¹äº‹çš„ï¼Œæ‰€ä»¥é€‰æ‹©åˆ©ç”¨fcbçš„freeæ ‡å·æ¥æ ‡è®°å…¶æ˜¯å¦è¢«åˆ é™¤
 	char exname[3];
 	char filename[DIRLEN];
 	unsigned short time;
 	unsigned short date;
-	unsigned short first; // ÎÄ¼şÆğÊ¼ÅÌ¿éºÅ
-	unsigned long length; // ÎÄ¼şµÄÊµ¼Ê³¤¶È
-	unsigned char attribute; // ÎÄ¼şÊôĞÔ×Ö¶Î£ºÎª¼òµ¥Æğ¼û£¬ÎÒÃÇÖ»ÎªÎÄ¼şÉèÖÃÁËÁ½ÖÖÊôĞÔ£ºÖµÎª 0 Ê±±íÊ¾Ä¿Â¼ÎÄ¼ş£¬ÖµÎª 1 Ê±±íÊ¾Êı¾İÎÄ¼ş
+	unsigned short first; // æ–‡ä»¶èµ·å§‹ç›˜å—å·
+	unsigned long length; // æ–‡ä»¶çš„å®é™…é•¿åº¦
+	unsigned char attribute; // æ–‡ä»¶å±æ€§å­—æ®µï¼šä¸ºç®€å•èµ·è§ï¼Œæˆ‘ä»¬åªä¸ºæ–‡ä»¶è®¾ç½®äº†ä¸¤ç§å±æ€§ï¼šå€¼ä¸º 0 æ—¶è¡¨ç¤ºç›®å½•æ–‡ä»¶ï¼Œå€¼ä¸º 1 æ—¶è¡¨ç¤ºæ•°æ®æ–‡ä»¶
 } fcb;
 
-// ¶ÔÓÚÎÄ¼ş¼Ğfcb£¬ÆäcountÓÀÔ¶µÈÓÚÆäfcbµÄlength£¬
-// Ö»ÓĞÎÄ¼şfcbµÄcount»á¸ù¾İ´ò¿ª·½Ê½µÄ²»Í¬ºÍ¶ÁĞ´·½Ê½µÄ²»Í¬¶ø²»Í¬
+// å¯¹äºæ–‡ä»¶å¤¹fcbï¼Œå…¶countæ°¸è¿œç­‰äºå…¶fcbçš„lengthï¼Œ
+// åªæœ‰æ–‡ä»¶fcbçš„countä¼šæ ¹æ®æ‰“å¼€æ–¹å¼çš„ä¸åŒå’Œè¯»å†™æ–¹å¼çš„ä¸åŒè€Œä¸åŒ
 typedef struct USEROPEN {
-	fcb open_fcb; // ÎÄ¼şµÄ FCB ÖĞµÄÄÚÈİ
-	int count; // ¶ÁĞ´Ö¸ÕëÔÚÎÄ¼şÖĞµÄÎ»ÖÃ
-	int dirno; // ÏàÓ¦´ò¿ªÎÄ¼şµÄÄ¿Â¼ÏîÔÚ¸¸Ä¿Â¼ÎÄ¼şÖĞµÄÅÌ¿éºÅ
-	int diroff; // ÏàÓ¦´ò¿ªÎÄ¼şµÄÄ¿Â¼ÏîÔÚ¸¸Ä¿Â¼ÎÄ¼şµÄdirnoÅÌ¿éÖĞµÄÆğÊ¼Î»ÖÃ
-	char fcbstate; // ÊÇ·ñĞŞ¸ÄÁËÎÄ¼şµÄ FCB µÄÄÚÈİ£¬Èç¹ûĞŞ¸ÄÁËÖÃÎª 1£¬·ñÔòÎª 0
-	char topenfile; // ±íÊ¾¸ÃÓÃ»§´ò¿ª±íÏîÊÇ·ñÎª¿Õ£¬ÈôÖµÎª 0£¬±íÊ¾Îª¿Õ£¬·ñÔò±íÊ¾ÒÑ±»Ä³´ò¿ªÎÄ¼şÕ¼¾İ
-	char dir[DIRLEN]; // ´ò¿ªÎÄ¼şµÄ¾ø¶ÔÂ·¾¶Ãû£¬ÕâÑù·½±ã¿ìËÙ¼ì²é³öÖ¸¶¨ÎÄ¼şÊÇ·ñÒÑ¾­´ò¿ª
+	fcb open_fcb; // æ–‡ä»¶çš„ FCB ä¸­çš„å†…å®¹
+	int count; // è¯»å†™æŒ‡é’ˆåœ¨æ–‡ä»¶ä¸­çš„ä½ç½®
+	int dirno; // ç›¸åº”æ‰“å¼€æ–‡ä»¶çš„ç›®å½•é¡¹åœ¨çˆ¶ç›®å½•æ–‡ä»¶ä¸­çš„ç›˜å—å·
+	int diroff; // ç›¸åº”æ‰“å¼€æ–‡ä»¶çš„ç›®å½•é¡¹åœ¨çˆ¶ç›®å½•æ–‡ä»¶çš„dirnoç›˜å—ä¸­çš„èµ·å§‹ä½ç½®
+	char fcbstate; // æ˜¯å¦ä¿®æ”¹äº†æ–‡ä»¶çš„ FCB çš„å†…å®¹ï¼Œå¦‚æœä¿®æ”¹äº†ç½®ä¸º 1ï¼Œå¦åˆ™ä¸º 0
+	char topenfile; // è¡¨ç¤ºè¯¥ç”¨æˆ·æ‰“å¼€è¡¨é¡¹æ˜¯å¦ä¸ºç©ºï¼Œè‹¥å€¼ä¸º 0ï¼Œè¡¨ç¤ºä¸ºç©ºï¼Œå¦åˆ™è¡¨ç¤ºå·²è¢«æŸæ‰“å¼€æ–‡ä»¶å æ®
+	char dir[DIRLEN]; // æ‰“å¼€æ–‡ä»¶çš„ç»å¯¹è·¯å¾„åï¼Œè¿™æ ·æ–¹ä¾¿å¿«é€Ÿæ£€æŸ¥å‡ºæŒ‡å®šæ–‡ä»¶æ˜¯å¦å·²ç»æ‰“å¼€
 } useropen;
 
 typedef struct BLOCK0 {
@@ -59,94 +59,94 @@ typedef struct BLOCK0 {
 } block0;
 
 // utils
-// ÕâÀïÊÇÒ»Ğ©»ù´¡µÄº¯Êı£¬¶¼ÊÇÒ»Ğ©»áÖØ¸´ÀûÓÃµÄ²Ù×÷
+// è¿™é‡Œæ˜¯ä¸€äº›åŸºç¡€çš„å‡½æ•°ï¼Œéƒ½æ˜¯ä¸€äº›ä¼šé‡å¤åˆ©ç”¨çš„æ“ä½œ
 
-// ¸ù¾İËù¸øµÄ²ÎÊı¶Ôfcb½øĞĞ³õÊ¼»¯
+// æ ¹æ®æ‰€ç»™çš„å‚æ•°å¯¹fcbè¿›è¡Œåˆå§‹åŒ–
 void fcb_init(fcb *new_fcb, const char* filename, unsigned short first, unsigned char attribute);
-// ¸ù¾İËù¸øµÄ²ÎÊı¶ÔÒ»¸ö´ò¿ªÎÄ¼şÏî½øĞĞ³õÊ¼»¯
+// æ ¹æ®æ‰€ç»™çš„å‚æ•°å¯¹ä¸€ä¸ªæ‰“å¼€æ–‡ä»¶é¡¹è¿›è¡Œåˆå§‹åŒ–
 void useropen_init(useropen *openfile, int dirno, int diroff, const char* dir);
-// Í¨¹ıdfs¶Ô½«ÒÑÊ¹ÓÃµÄfat¿éÊÍ·Å
+// é€šè¿‡dfså¯¹å°†å·²ä½¿ç”¨çš„fatå—é‡Šæ”¾
 void fatFree(int id);
-// µÃµ½Ò»¸ö¿ÕÏĞµÄfat¿é
+// å¾—åˆ°ä¸€ä¸ªç©ºé—²çš„fatå—
 int getFreeFatid();
-// µÃµ½Ò»¸ö¿ÕÏĞµÄ´ò¿ªÎÄ¼ş±íÏî
+// å¾—åˆ°ä¸€ä¸ªç©ºé—²çš„æ‰“å¼€æ–‡ä»¶è¡¨é¡¹
 int getFreeOpenlist();
-// µÃµ½Ò»¸öfat±íµÄÏÂÒ»¸öfat±í£¬Èç¹ûÃ»ÓĞÔò´´½¨
+// å¾—åˆ°ä¸€ä¸ªfatè¡¨çš„ä¸‹ä¸€ä¸ªfatè¡¨ï¼Œå¦‚æœæ²¡æœ‰åˆ™åˆ›å»º
 int getNextFat(int id);
-// ¼ì²éÒ»¸ö´ò¿ªÎÄ¼ş±íÏÂ±íÊÇ·ñºÏ·¨
+// æ£€æŸ¥ä¸€ä¸ªæ‰“å¼€æ–‡ä»¶è¡¨ä¸‹è¡¨æ˜¯å¦åˆæ³•
 int check_fd(int fd);
-// °ÑÒ»¸öÂ·¾¶°´'/'·Ö¸î
+// æŠŠä¸€ä¸ªè·¯å¾„æŒ‰'/'åˆ†å‰²
 int spiltDir(char dirs[DIRLEN][DIRLEN], char *filename);
-// °ÑÒ»¸öÂ·¾¶µÄ×îºóÒ»¸öÄ¿Â¼´Ó×Ö·û´®ÖĞÉ¾È¥
+// æŠŠä¸€ä¸ªè·¯å¾„çš„æœ€åä¸€ä¸ªç›®å½•ä»å­—ç¬¦ä¸²ä¸­åˆ å»
 void popLastDir(char *dir);
-// °ÑÒ»¸öÂ·¾¶µÄ×îºóÒ»¸öÄ¿Â¼´Ó×Ö·û´®ÖĞ·Ö¸î³ö
+// æŠŠä¸€ä¸ªè·¯å¾„çš„æœ€åä¸€ä¸ªç›®å½•ä»å­—ç¬¦ä¸²ä¸­åˆ†å‰²å‡º
 void splitLastDir(char *dir, char new_dir[2][DIRLEN]);
-// µÃµ½Ä³¸ö³¤¶ÈÔÚÄ³¸öfatÖĞµÄ¶ÔÓ¦µÄÅÌ¿éºÅºÍÆ«ÒÆÁ¿£¬ÓÃÀ´¼ÇÂ¼Ò»¸ö´ò¿ªÎÄ¼şÏîÔÚÆä¸¸Ä¿Â¼¶ÔÓ¦fatµÄÎ»ÖÃ
+// å¾—åˆ°æŸä¸ªé•¿åº¦åœ¨æŸä¸ªfatä¸­çš„å¯¹åº”çš„ç›˜å—å·å’Œåç§»é‡ï¼Œç”¨æ¥è®°å½•ä¸€ä¸ªæ‰“å¼€æ–‡ä»¶é¡¹åœ¨å…¶çˆ¶ç›®å½•å¯¹åº”fatçš„ä½ç½®
 void getPos(int *id, int *offset, unsigned short first, int length);
-// °ÑÂ·¾¶¹æ·¶»¯²¢¼ì²é
+// æŠŠè·¯å¾„è§„èŒƒåŒ–å¹¶æ£€æŸ¥
 int rewrite_dir(char *dir);
 
 // basics
-// ¸ù¾İÅÌ¿éºÅºÍÆ«ÒÆÁ¿£¬Ö±½Ó´ÓFATÉÏ¶ÁÈ¡Ö¸¶¨³¤¶ÈµÄĞÅÏ¢
+// æ ¹æ®ç›˜å—å·å’Œåç§»é‡ï¼Œç›´æ¥ä»FATä¸Šè¯»å–æŒ‡å®šé•¿åº¦çš„ä¿¡æ¯
 int fat_read(unsigned short id, unsigned char *text, int offset, int len);
-// ¶ÁÈ¡Ä³¸öÒÑ´ò¿ªÎÄ¼şµÄÖ¸¶¨³¤¶ÈĞÅÏ¢
+// è¯»å–æŸä¸ªå·²æ‰“å¼€æ–‡ä»¶çš„æŒ‡å®šé•¿åº¦ä¿¡æ¯
 int do_read(int fd, unsigned char *text, int len);
-// ¸ù¾İÅÌ¿éºÅºÍÆ«ÒÆÁ¿£¬Ö±½Ó´ÓFATÉÏĞ´ÈëÖ¸¶¨³¤¶ÈµÄĞÅÏ¢
+// æ ¹æ®ç›˜å—å·å’Œåç§»é‡ï¼Œç›´æ¥ä»FATä¸Šå†™å…¥æŒ‡å®šé•¿åº¦çš„ä¿¡æ¯
 int fat_write(unsigned short id, unsigned char *text, int blockoffset, int len);
-// ÏòÄ³¸öÒÑ´ò¿ªÎÄ¼şĞ´ÈëÖ¸¶¨³¤¶ÈĞÅÏ¢
+// å‘æŸä¸ªå·²æ‰“å¼€æ–‡ä»¶å†™å…¥æŒ‡å®šé•¿åº¦ä¿¡æ¯
 int do_write(int fd, unsigned char *text, int len);
-// ´ÓÒ»¸öÒÑ´ò¿ªÄ¿Â¼ÎÄ¼şÕÒµ½¶ÔÓ¦Ãû³ÆµÄÎÄ¼ş¼Ğfcb£¬ÓÃÓÚÒ»Ğ©²»¶Ïµİ¹é´ò¿ªÎÄ¼ş¼ĞµÄº¯ÊıÖĞ
+// ä»ä¸€ä¸ªå·²æ‰“å¼€ç›®å½•æ–‡ä»¶æ‰¾åˆ°å¯¹åº”åç§°çš„æ–‡ä»¶å¤¹fcbï¼Œç”¨äºä¸€äº›ä¸æ–­é€’å½’æ‰“å¼€æ–‡ä»¶å¤¹çš„å‡½æ•°ä¸­
 int getFcb(fcb* fcbp, int *dirno, int *diroff, int fd, const char *dir);
-// ÔÚÒ»¸öÒÑ´ò¿ªÄ¿Â¼ÎÄ¼şÏÂ´ò¿ªÄ³¸öÎÄ¼ş
+// åœ¨ä¸€ä¸ªå·²æ‰“å¼€ç›®å½•æ–‡ä»¶ä¸‹æ‰“å¼€æŸä¸ªæ–‡ä»¶
 int getOpenlist(int fd, const char *org_dir);
-// ´ò¿ªÎÄ¼ş
+// æ‰“å¼€æ–‡ä»¶
 int my_open(char *filename);
 
 // read
-// ¶ÁÈ¡Ò»¸öÎÄ¼ş¼ĞÏÂµÄfcbĞÅÏ¢
+// è¯»å–ä¸€ä¸ªæ–‡ä»¶å¤¹ä¸‹çš„fcbä¿¡æ¯
 int read_ls(int fd, unsigned char *text, int len);
-// °ÑÒ»¸öÎÄ¼ş¼ĞÏÂµÄfcbĞÅÏ¢´òÓ¡³öÀ´
+// æŠŠä¸€ä¸ªæ–‡ä»¶å¤¹ä¸‹çš„fcbä¿¡æ¯æ‰“å°å‡ºæ¥
 void my_ls();
-// °ÑÒ»¸ö´ò¿ªÎÄ¼şµÄÄÚÈİ¸ù¾İÎÄ¼şÖ¸Õë´òÓ¡³öÀ´
+// æŠŠä¸€ä¸ªæ‰“å¼€æ–‡ä»¶çš„å†…å®¹æ ¹æ®æ–‡ä»¶æŒ‡é’ˆæ‰“å°å‡ºæ¥
 int my_read(int fd);
-// ÖØĞÂ´Ó´ÅÅÌÖĞ¶ÁÈ¡Ò»¸ö´ò¿ªÎÄ¼şµÄfcbÄÚÈİ
+// é‡æ–°ä»ç£ç›˜ä¸­è¯»å–ä¸€ä¸ªæ‰“å¼€æ–‡ä»¶çš„fcbå†…å®¹
 void my_reload(int fd);
 
 //write
-// °Ñ¼üÅÌÊäÈëµÄĞÅÏ¢Ğ´ÈëÒ»¸ö´ò¿ªÎÄ¼ş
+// æŠŠé”®ç›˜è¾“å…¥çš„ä¿¡æ¯å†™å…¥ä¸€ä¸ªæ‰“å¼€æ–‡ä»¶
 int my_write(int fd);
-// °ÑÒ»¸öÖ¸¶¨Ä¿Â¼µÄfcbµÄfreeÖÃÎª1
+// æŠŠä¸€ä¸ªæŒ‡å®šç›®å½•çš„fcbçš„freeç½®ä¸º1
 void my_rmdir(char *dirname);
-// °ÑÒ»¸öÖ¸¶¨ÎÄ¼şµÄfcbµÄfreeÖÃÎª1
+// æŠŠä¸€ä¸ªæŒ‡å®šæ–‡ä»¶çš„fcbçš„freeç½®ä¸º1
 void my_rm(char *filename);
 
 //create
-// ¸ñÊ½»¯
+// æ ¼å¼åŒ–
 void my_format();
-// ÔÚÖ¸¶¨Ä¿Â¼ÏÂ´´½¨Ò»¸öÎÄ¼ş»òÎÄ¼ş¼Ğ
+// åœ¨æŒ‡å®šç›®å½•ä¸‹åˆ›å»ºä¸€ä¸ªæ–‡ä»¶æˆ–æ–‡ä»¶å¤¹
 int my_touch(char *filename, int attribute, int *rpafd);
-// µ÷ÓÃtouch´´½¨³öÒ»¸öÎÄ¼ş
+// è°ƒç”¨touchåˆ›å»ºå‡ºä¸€ä¸ªæ–‡ä»¶
 int my_create(char *filename);
-// µ÷ÓÃtouch´´½¨³öÒ»¸öÎÄ¼ş¼Ğ
+// è°ƒç”¨touchåˆ›å»ºå‡ºä¸€ä¸ªæ–‡ä»¶å¤¹
 void my_mkdir(char *dirname);
 
 //others
-// Æô¶¯ÏµÍ³£¬×öºÃÏà¹ØµÄ³õÊ¼»¯
+// å¯åŠ¨ç³»ç»Ÿï¼Œåšå¥½ç›¸å…³çš„åˆå§‹åŒ–
 void startsys();
-// ÍË³öÏµÍ³£¬×öºÃÏàÓ¦±¸·İ¹¤×÷
+// é€€å‡ºç³»ç»Ÿï¼Œåšå¥½ç›¸åº”å¤‡ä»½å·¥ä½œ
 void my_exitsys();
-// ½«Ò»¸ö´ò¿ªÎÄ¼şµÄfatĞÅÏ¢´¢´æÏÂÀ´
+// å°†ä¸€ä¸ªæ‰“å¼€æ–‡ä»¶çš„fatä¿¡æ¯å‚¨å­˜ä¸‹æ¥
 void my_save(int fd);
-// ¹Ø±ÕÒ»¸ö´ò¿ªÎÄ¼ş
+// å…³é—­ä¸€ä¸ªæ‰“å¼€æ–‡ä»¶
 void my_close(int fd);
-// ÀûÓÃmy_open°Ñµ±Ç°Ä¿Â¼ÇĞ»»µ½Ö¸¶¨Ä¿Â¼ÏÂ
+// åˆ©ç”¨my_openæŠŠå½“å‰ç›®å½•åˆ‡æ¢åˆ°æŒ‡å®šç›®å½•ä¸‹
 void my_cd(char *dirname);
-// ÏÔÊ¾°ïÖú²Ëµ¥
+// æ˜¾ç¤ºå¸®åŠ©èœå•
 void my_help();
 
 unsigned char *myvhard;
 useropen openfilelist[MAXOPENFILE];
-int curdirid; // Ö¸ÏòÓÃ»§´ò¿ªÎÄ¼ş±íÖĞµÄµ±Ç°Ä¿Â¼ËùÔÚ´ò¿ªÎÄ¼ş±íÏîµÄÎ»ÖÃ
+int curdirid; // æŒ‡å‘ç”¨æˆ·æ‰“å¼€æ–‡ä»¶è¡¨ä¸­çš„å½“å‰ç›®å½•æ‰€åœ¨æ‰“å¼€æ–‡ä»¶è¡¨é¡¹çš„ä½ç½®
 
 unsigned char *blockaddr[BLOCKNUM];
 block0 initblock;
@@ -162,21 +162,21 @@ int main() {
 	char command[DIRLEN << 1];
 	printf("File System ver 1.0 by ssd.\n");
 	printf("***************************************************************\n");
-	printf("ÃüÁîÃû\t\tÃüÁî²ÎÊı\t\tÃüÁîËµÃ÷\n\n");
-	printf("cd\t\tÄ¿Â¼Ãû(Â·¾¶Ãû)\t\tÇĞ»»µ±Ç°Ä¿Â¼µ½Ö¸¶¨Ä¿Â¼\n");
-	printf("mkdir\t\tÄ¿Â¼Ãû\t\t\tÔÚµ±Ç°Ä¿Â¼´´½¨ĞÂÄ¿Â¼\n");
-	printf("rmdir\t\tÄ¿Â¼Ãû\t\t\tÔÚµ±Ç°Ä¿Â¼É¾³ıÖ¸¶¨Ä¿Â¼\n");
-	printf("ls\t\tÎŞ\t\t\tÏÔÊ¾µ±Ç°Ä¿Â¼ÏÂµÄÄ¿Â¼ºÍÎÄ¼ş\n");
-	printf("create\t\tÎÄ¼şÃû\t\t\tÔÚµ±Ç°Ä¿Â¼ÏÂ´´½¨Ö¸¶¨ÎÄ¼ş\n");
-	printf("rm\t\tÎÄ¼şÃû\t\t\tÔÚµ±Ç°Ä¿Â¼ÏÂÉ¾³ıÖ¸¶¨ÎÄ¼ş\n");
-	printf("open\t\tÎÄ¼şÃû\t\t\tÔÚµ±Ç°Ä¿Â¼ÏÂ´ò¿ªÖ¸¶¨ÎÄ¼ş\n");
-	printf("write\t\tfd\t\t\tÔÚ´ò¿ªÎÄ¼ş×´Ì¬ÏÂ£¬Ğ´¸ÃÎÄ¼ş\n");
-	printf("read\t\tfd\t\t\tÔÚ´ò¿ªÎÄ¼ş×´Ì¬ÏÂ£¬¶ÁÈ¡¸ÃÎÄ¼ş\n");
-	printf("close\t\tfd\t\t\tÔÚ´ò¿ªÎÄ¼ş×´Ì¬ÏÂ£¬¹Ø±Õ¸ÃÎÄ¼ş\n");
-	printf("help\t\tÎŞ\t\t\t²é¿´°ïÖú\n");
-	printf("sf\t\tÎŞ\t\t\t²é¿´´ò¿ªÎÄ¼ş\n");
-	printf("format\t\tÎŞ\t\t\t¸ñÊ½»¯ÎÄ¼şÏµÍ³\n");
-	printf("exit\t\tÎŞ\t\t\tÍË³öÏµÍ³\n\n");
+	printf("å‘½ä»¤å\t\tå‘½ä»¤å‚æ•°\t\tå‘½ä»¤è¯´æ˜\n\n");
+	printf("cd\t\tç›®å½•å(è·¯å¾„å)\t\tåˆ‡æ¢å½“å‰ç›®å½•åˆ°æŒ‡å®šç›®å½•\n");
+	printf("mkdir\t\tç›®å½•å\t\t\tåœ¨å½“å‰ç›®å½•åˆ›å»ºæ–°ç›®å½•\n");
+	printf("rmdir\t\tç›®å½•å\t\t\tåœ¨å½“å‰ç›®å½•åˆ é™¤æŒ‡å®šç›®å½•\n");
+	printf("ls\t\tæ— \t\t\tæ˜¾ç¤ºå½“å‰ç›®å½•ä¸‹çš„ç›®å½•å’Œæ–‡ä»¶\n");
+	printf("create\t\tæ–‡ä»¶å\t\t\tåœ¨å½“å‰ç›®å½•ä¸‹åˆ›å»ºæŒ‡å®šæ–‡ä»¶\n");
+	printf("rm\t\tæ–‡ä»¶å\t\t\tåœ¨å½“å‰ç›®å½•ä¸‹åˆ é™¤æŒ‡å®šæ–‡ä»¶\n");
+	printf("open\t\tæ–‡ä»¶å\t\t\tåœ¨å½“å‰ç›®å½•ä¸‹æ‰“å¼€æŒ‡å®šæ–‡ä»¶\n");
+	printf("write\t\tfd\t\t\tåœ¨æ‰“å¼€æ–‡ä»¶çŠ¶æ€ä¸‹ï¼Œå†™è¯¥æ–‡ä»¶\n");
+	printf("read\t\tfd\t\t\tåœ¨æ‰“å¼€æ–‡ä»¶çŠ¶æ€ä¸‹ï¼Œè¯»å–è¯¥æ–‡ä»¶\n");
+	printf("close\t\tfd\t\t\tåœ¨æ‰“å¼€æ–‡ä»¶çŠ¶æ€ä¸‹ï¼Œå…³é—­è¯¥æ–‡ä»¶\n");
+	printf("help\t\tæ— \t\t\tæŸ¥çœ‹å¸®åŠ©\n");
+	printf("sf\t\tæ— \t\t\tæŸ¥çœ‹æ‰“å¼€æ–‡ä»¶\n");
+	printf("format\t\tæ— \t\t\tæ ¼å¼åŒ–æ–‡ä»¶ç³»ç»Ÿ\n");
+	printf("exit\t\tæ— \t\t\té€€å‡ºç³»ç»Ÿ\n\n");
 	printf("***************************************************************\n");
 	startsys();
 	printf("%s: %s$ ", USERNAME, openfilelist[curdirid].dir);
@@ -298,7 +298,7 @@ void fatFree(int id) {
 }
 
 int getFreeFatid() {
-	for (int i = 5; i < BLOCKNUM; ++i) if (fat1[i].id == FREE) return i;
+	for (int i = 0; i < BLOCKNUM; ++i) if (fat1[i].id == FREE) return i;
 	return END;
 }
 
@@ -449,7 +449,7 @@ int fat_write(unsigned short id, unsigned char *text, int blockoffset, int len) 
 		return -1;
 	}
 
-	// Ğ´Ö®Ç°ÏÈ°Ñ´ÅÅÌ³¤¶ÈÀ©³äµ½ËùĞè´óĞ¡
+	// å†™ä¹‹å‰å…ˆæŠŠç£ç›˜é•¿åº¦æ‰©å……åˆ°æ‰€éœ€å¤§å°
 	int tlen = len;
 	int toffset = blockoffset;
 	unsigned short tid = id;
@@ -496,21 +496,21 @@ int do_write(int fd, unsigned char *text, int len) {
 
 	fcbp->length += ret;
 	openfilelist[fd].fcbstate = 1;
-	// Èç¹ûÎÄ¼ş¼Ğ±»Ğ´ÁË£¬ÄÇÃ´Æä'.'Ò²Òª±»Ğ´½øÈ¥
-	// Æä×ÓÎÄ¼ş¼ĞµÄ'..'Ò²Òª±»¸üĞÂ
+	// å¦‚æœæ–‡ä»¶å¤¹è¢«å†™äº†ï¼Œé‚£ä¹ˆå…¶'.'ä¹Ÿè¦è¢«å†™è¿›å»
+	// å…¶å­æ–‡ä»¶å¤¹çš„'..'ä¹Ÿè¦è¢«æ›´æ–°
 	if (!fcbp->attribute) {
 		fcb tmp;
 		memcpy(&tmp, fcbp, sizeof(fcb));
 		strcpy(tmp.filename, ".");
 		memcpy(blockaddr[fcbp->first], &tmp, sizeof(fcb));
 
-		// Èç¹ûÊÇ¸ùÄ¿Â¼µÄ»°£¬".."Ò²Òª±»ĞŞ¸Ä
+		// å¦‚æœæ˜¯æ ¹ç›®å½•çš„è¯ï¼Œ".."ä¹Ÿè¦è¢«ä¿®æ”¹
 		strcpy(tmp.filename, "..");
 		if (fcbp->first == 5) {
 			memcpy(blockaddr[fcbp->first] + sizeof(fcb), &tmp, sizeof(fcb));
 		}
 
-		// ´Ó´ÅÅÌÖĞ¶Á³öµ±Ç°Ä¿Â¼µÄĞÅÏ¢
+		// ä»ç£ç›˜ä¸­è¯»å‡ºå½“å‰ç›®å½•çš„ä¿¡æ¯
 		unsigned char buf[SIZE];
 		int read_size = read_ls(fd, buf, fcbp->length);
 		if (read_size == -1) {
@@ -539,7 +539,7 @@ int getFcb(fcb* fcbp, int *dirno, int *diroff, int fd, const char *dir) {
 
 	useropen *file = &openfilelist[fd];
 
-	// ´Ó´ÅÅÌÖĞ¶Á³öµ±Ç°Ä¿Â¼µÄĞÅÏ¢
+	// ä»ç£ç›˜ä¸­è¯»å‡ºå½“å‰ç›®å½•çš„ä¿¡æ¯
 	unsigned char *buf = (unsigned char *)malloc(SIZE);
 	int read_size = read_ls(fd, buf, file->open_fcb.length);
 	if (read_size == -1) {
@@ -560,10 +560,10 @@ int getFcb(fcb* fcbp, int *dirno, int *diroff, int fd, const char *dir) {
 
 	free(buf);
 
-	// Ã»ÓĞÕÒµ½ĞèÒªµÄÎÄ¼ş
+	// æ²¡æœ‰æ‰¾åˆ°éœ€è¦çš„æ–‡ä»¶
 	if (flag == -1) return -1;
 
-	// ÕÒµ½µÄ»°¾Í¿ªÊ¼¼ÆËãÏà¹ØĞÅÏ¢£¬¸Ä±ä¶ÔÓ¦´ò¿ªÎÄ¼şÏîµÄÖµ
+	// æ‰¾åˆ°çš„è¯å°±å¼€å§‹è®¡ç®—ç›¸å…³ä¿¡æ¯ï¼Œæ”¹å˜å¯¹åº”æ‰“å¼€æ–‡ä»¶é¡¹çš„å€¼
 	getPos(dirno, diroff, file->open_fcb.first, flag);
 	memcpy(fcbp, &dirfcb, sizeof(fcb));
 
@@ -571,7 +571,7 @@ int getFcb(fcb* fcbp, int *dirno, int *diroff, int fd, const char *dir) {
 }
 
 int getOpenlist(int fd, const char *org_dir) {
-	// °ÑÂ·¾¶Ãû´¦Àí³É¾ø¶ÔÂ·¾¶
+	// æŠŠè·¯å¾„åå¤„ç†æˆç»å¯¹è·¯å¾„
 	char dir[DIRLEN];
 	if (fd == -1) {
 		strcpy(dir, "~/");
@@ -581,7 +581,7 @@ int getOpenlist(int fd, const char *org_dir) {
 		strcat(dir, org_dir);
 	}
 
-	// Èç¹ûÓĞ´ò¿ªµÄÄ¿Â¼ºÍÏë´ò¿ªµÄÄ¿Â¼ÖØÃû£¬±ØĞë°ÑÔ­Ä¿Â¼µÄÄÚÈİĞ´»Ø´ÅÅÌ
+	// å¦‚æœæœ‰æ‰“å¼€çš„ç›®å½•å’Œæƒ³æ‰“å¼€çš„ç›®å½•é‡åï¼Œå¿…é¡»æŠŠåŸç›®å½•çš„å†…å®¹å†™å›ç£ç›˜
 	for (int i = 0; i < MAXOPENFILE; ++i) if (i != fd) {
 		if (openfilelist[i].topenfile && !strcmp(openfilelist[i].dir, dir)) {
 			my_save(i);
@@ -608,7 +608,7 @@ int getOpenlist(int fd, const char *org_dir) {
 	file->fcbstate = 0;
 	file->topenfile = 1;
 
-	//Èç¹û´ò¿ªµÄÊÇÒ»¸öÎÄ¼ş¼Ğ£¬¾ÍÔÚÂ·¾¶ºóÃæ¼ÓÉÏ'/'
+	//å¦‚æœæ‰“å¼€çš„æ˜¯ä¸€ä¸ªæ–‡ä»¶å¤¹ï¼Œå°±åœ¨è·¯å¾„åé¢åŠ ä¸Š'/'
 	if (!file->open_fcb.attribute) {
 		int len = strlen(file->dir);
 		if (file->dir[len - 1] != '/') strcat(file->dir, "/");
@@ -636,10 +636,10 @@ int my_open(char *filename) {
 		strcpy(realdirs[tot++], dirs[i]);
 	}
 
-	// Éú³É¸ùÄ¿Â¼µÄ¸±±¾
+	// ç”Ÿæˆæ ¹ç›®å½•çš„å‰¯æœ¬
 	int fd = getOpenlist(-1, "");
 
-	// ÀûÓÃµ±Ç°Ä¿Â¼µÄ¸±±¾²»¶ÏÕÒµ½ÏÂÒ»¸öÄ¿Â¼
+	// åˆ©ç”¨å½“å‰ç›®å½•çš„å‰¯æœ¬ä¸æ–­æ‰¾åˆ°ä¸‹ä¸€ä¸ªç›®å½•
 	int flag = 0;
 	for (int i = 0; i < tot; ++i) {
 		int newfd = getOpenlist(fd, realdirs[i]);
@@ -671,7 +671,7 @@ int read_ls(int fd, unsigned char *text, int len) {
 }
 
 void my_ls() {
-	// ´Ó´ÅÅÌÖĞ¶Á³öµ±Ç°Ä¿Â¼µÄĞÅÏ¢
+	// ä»ç£ç›˜ä¸­è¯»å‡ºå½“å‰ç›®å½•çš„ä¿¡æ¯
 	unsigned char *buf = (unsigned char*)malloc(SIZE);
 	int read_size = read_ls(curdirid, buf, openfilelist[curdirid].open_fcb.length);
 	if (read_size == -1) {
@@ -725,10 +725,10 @@ int my_write(int fd) {
 	}
 
 	useropen *file = &openfilelist[fd];
-	printf("ÇëÊäÈëĞ´ÎÄ¼ş·½Ê½\n");
-	printf("  a : ×·¼ÓĞ´\n");
-	printf("  w : ½Ø¶ÏĞ´\n");
-	printf("  o : ¸²¸ÇĞ´\n");
+	printf("è¯·è¾“å…¥å†™æ–‡ä»¶æ–¹å¼\n");
+	printf("  a : è¿½åŠ å†™\n");
+	printf("  w : æˆªæ–­å†™\n");
+	printf("  o : è¦†ç›–å†™\n");
 	char op[5];
 	scanf("%s", op);
 	if (op[0] == 'a') {
@@ -776,7 +776,7 @@ void my_rmdir(char *dirname) {
 			return;
 		}
 
-		// ´Ó´ÅÅÌÖĞ¶Á³öµ±Ç°Ä¿Â¼µÄĞÅÏ¢
+		// ä»ç£ç›˜ä¸­è¯»å‡ºå½“å‰ç›®å½•çš„ä¿¡æ¯
 		int cnt = 0;
 		unsigned char *buf = (unsigned char*)malloc(SIZE);
 		int read_size = read_ls(fd, buf, openfilelist[fd].open_fcb.length);
@@ -850,11 +850,11 @@ void my_format() {
 	printf("my_format %s\n", root.filename);
 #endif // DEBUG_INFO
 
-	printf("³õÊ¼»¯Íê³É\n");
+	printf("åˆå§‹åŒ–å®Œæˆ\n");
 }
 
 int my_touch(char *filename, int attribute, int *rpafd) {
-	// ÏÈ´ò¿ªfileµÄÉÏ¼¶Ä¿Â¼£¬Èç¹ûÉÏ¼¶Ä¿Â¼²»´æÔÚ¾Í±¨´í£¨ÖÁÉÙ×Ô¼ºµçÄÔÉÏµÄUbuntuÊÇÕâ¸öÂß¼­£©
+	// å…ˆæ‰“å¼€fileçš„ä¸Šçº§ç›®å½•ï¼Œå¦‚æœä¸Šçº§ç›®å½•ä¸å­˜åœ¨å°±æŠ¥é”™ï¼ˆè‡³å°‘è‡ªå·±ç”µè„‘ä¸Šçš„Ubuntuæ˜¯è¿™ä¸ªé€»è¾‘ï¼‰
 	char split_dir[2][DIRLEN];
 	splitLastDir(filename, split_dir);
 
@@ -865,7 +865,7 @@ int my_touch(char *filename, int attribute, int *rpafd) {
 		return -1;
 	}
 
-	// ´Ó´ÅÅÌÖĞ¶Á³öµ±Ç°Ä¿Â¼µÄĞÅÏ¢£¬½øĞĞ¼ì²é
+	// ä»ç£ç›˜ä¸­è¯»å‡ºå½“å‰ç›®å½•çš„ä¿¡æ¯ï¼Œè¿›è¡Œæ£€æŸ¥
 	unsigned char *buf = (unsigned char*)malloc(SIZE);
 	int read_size = read_ls(pafd, buf, openfilelist[pafd].open_fcb.length);
 	if (read_size == -1) {
@@ -883,7 +883,7 @@ int my_touch(char *filename, int attribute, int *rpafd) {
 		}
 	}
 
-	// ÀûÓÃ¿ÕÏĞ´ÅÅÌ¿é´´½¨ÎÄ¼ş
+	// åˆ©ç”¨ç©ºé—²ç£ç›˜å—åˆ›å»ºæ–‡ä»¶
 	int fatid = getFreeFatid();
 	if (fatid == -1) {
 		SAYERROR;
@@ -893,7 +893,7 @@ int my_touch(char *filename, int attribute, int *rpafd) {
 	fat1[fatid].id = END;
 	fcb_init(&dirfcb, split_dir[1], fatid, attribute);
 
-	// Ğ´Èë¸¸Ç×Ä¿Â¼ÄÚ´æ
+	// å†™å…¥çˆ¶äº²ç›®å½•å†…å­˜
 	memcpy(buf, &dirfcb, sizeof(fcb));
 	int write_size = do_write(pafd, buf, sizeof(fcb));
 	if (write_size == -1) {
@@ -903,7 +903,7 @@ int my_touch(char *filename, int attribute, int *rpafd) {
 	}
 	openfilelist[pafd].count += write_size;
 
-	// ´´½¨×Ô¼ºµÄ´ò¿ªÎÄ¼şÏî
+	// åˆ›å»ºè‡ªå·±çš„æ‰“å¼€æ–‡ä»¶é¡¹
 	int fd = getFreeOpenlist();
 	if (!(0 <= fd && fd < MAXOPENFILE)) {
 		SAYERROR;
@@ -938,7 +938,7 @@ void my_mkdir(char *dirname) {
 	if (!check_fd(fd)) return;
 	unsigned char *buf = (unsigned char*)malloc(SIZE);
 
-	// °Ñ"."ºÍ".."×°Èë×Ô¼ºµÄ´ÅÅÌ
+	// æŠŠ"."å’Œ".."è£…å…¥è‡ªå·±çš„ç£ç›˜
 	fcb dirfcb;
 	memcpy(&dirfcb, &openfilelist[fd].open_fcb, sizeof(fcb));
 	int fatid = dirfcb.first;
@@ -955,16 +955,16 @@ void my_mkdir(char *dirname) {
 
 // others
 void startsys() {
-	// ¸÷ÖÖ±äÁ¿³õÊ¼»¯
+	// å„ç§å˜é‡åˆå§‹åŒ–
 	myvhard = (unsigned char*)malloc(SIZE);
 	for (int i = 0; i < BLOCKNUM; ++i) blockaddr[i] = i * BLOCKSIZE + myvhard;
 	for (int i = 0; i < MAXOPENFILE; ++i) openfilelist[i].topenfile = 0;
 
-	// ×¼±¸¶ÁÈë myfsys ÎÄ¼şĞÅÏ¢
+	// å‡†å¤‡è¯»å…¥ myfsys æ–‡ä»¶ä¿¡æ¯
 	FILE *fp = fopen("myfsys", "rb");
 	char need_format = 0;
 
-	// ÅĞ¶ÏÊÇ·ñĞèÒª¸ñÊ½»¯
+	// åˆ¤æ–­æ˜¯å¦éœ€è¦æ ¼å¼åŒ–
 	if (fp != NULL) {
 		unsigned char *buf = (unsigned char*)malloc(SIZE);
 		fread(buf, 1, SIZE, fp);
@@ -978,17 +978,17 @@ void startsys() {
 		need_format = 1;
 	}
 
-	// ²»ĞèÒª¸ñÊ½»¯µÄ»°½Ó×Å¶ÁÈëfatĞÅÏ¢
+	// ä¸éœ€è¦æ ¼å¼åŒ–çš„è¯æ¥ç€è¯»å…¥fatä¿¡æ¯
 	if (!need_format) {
 		memcpy(fat1, blockaddr[1], sizeof(fat1));
 		memcpy(fat2, blockaddr[3], sizeof(fat2));
 	}
 	else {
-		printf("myfsys ÎÄ¼şÏµÍ³²»´æÔÚ£¬ÏÖÔÚ¿ªÊ¼´´½¨ÎÄ¼şÏµÍ³\n");
+		printf("myfsys æ–‡ä»¶ç³»ç»Ÿä¸å­˜åœ¨ï¼Œç°åœ¨å¼€å§‹åˆ›å»ºæ–‡ä»¶ç³»ç»Ÿ\n");
 		my_format();
 	}
 
-	// °Ñ¸ùÄ¿Â¼fcb·ÅÈë´ò¿ªÎÄ¼ş±íÖĞ£¬Éè¶¨µ±Ç°Ä¿Â¼Îª¸ùÄ¿Â¼
+	// æŠŠæ ¹ç›®å½•fcbæ”¾å…¥æ‰“å¼€æ–‡ä»¶è¡¨ä¸­ï¼Œè®¾å®šå½“å‰ç›®å½•ä¸ºæ ¹ç›®å½•
 	curdirid = 0;
 	memcpy(&openfilelist[curdirid].open_fcb, blockaddr[5], sizeof(fcb));
 #ifdef DEBUG_INFO
@@ -998,7 +998,7 @@ void startsys() {
 }
 
 void my_exitsys() {
-	// ÏÈ¹Ø±ÕËùÓĞ´ò¿ªÎÄ¼şÏî
+	// å…ˆå…³é—­æ‰€æœ‰æ‰“å¼€æ–‡ä»¶é¡¹
 	for (int i = 0; i < MAXOPENFILE; ++i) my_close(i);
 
 	memcpy(blockaddr[0], &initblock, sizeof(initblock));
@@ -1024,7 +1024,7 @@ void my_close(int fd) {
 	if (!check_fd(fd)) return;
 	if (openfilelist[fd].topenfile == 0) return;
 
-	// ÈôÄÚÈİÓĞ¸Ä±ä£¬°ÑfcbÄÚÈİĞ´»Ø¸¸Ç×µÄ´ÅÅÌ¿éÖĞ
+	// è‹¥å†…å®¹æœ‰æ”¹å˜ï¼ŒæŠŠfcbå†…å®¹å†™å›çˆ¶äº²çš„ç£ç›˜å—ä¸­
 	if (openfilelist[fd].fcbstate) my_save(fd);
 
 	openfilelist[fd].topenfile = 0;
@@ -1040,28 +1040,28 @@ void my_cd(char *dirname) {
 		return;
 	}
 
-	// µÃµ½µÄfdÊÇÎÄ¼ş¼ĞµÄ»°£¬¾Í°ÑÔ­À´µÄÄ¿Â¼¹ØÁË,°ÑÏÖÔÚµÄÄ¿Â¼ÉèÎªµ±Ç°Ä¿Â¼
+	// å¾—åˆ°çš„fdæ˜¯æ–‡ä»¶å¤¹çš„è¯ï¼Œå°±æŠŠåŸæ¥çš„ç›®å½•å…³äº†,æŠŠç°åœ¨çš„ç›®å½•è®¾ä¸ºå½“å‰ç›®å½•
 	my_close(curdirid);
 	curdirid = fd;
 }
 
 void my_help() {
 	printf("***************************************************************\n");
-	printf("ÃüÁîÃû\t\tÃüÁî²ÎÊı\t\tÃüÁîËµÃ÷\n\n");
-	printf("cd\t\tÄ¿Â¼Ãû(Â·¾¶Ãû)\t\tÇĞ»»µ±Ç°Ä¿Â¼µ½Ö¸¶¨Ä¿Â¼\n");
-	printf("mkdir\t\tÄ¿Â¼Ãû\t\t\tÔÚµ±Ç°Ä¿Â¼´´½¨ĞÂÄ¿Â¼\n");
-	printf("rmdir\t\tÄ¿Â¼Ãû\t\t\tÔÚµ±Ç°Ä¿Â¼É¾³ıÖ¸¶¨Ä¿Â¼\n");
-	printf("ls\t\tÎŞ\t\t\tÏÔÊ¾µ±Ç°Ä¿Â¼ÏÂµÄÄ¿Â¼ºÍÎÄ¼ş\n");
-	printf("create\t\tÎÄ¼şÃû\t\t\tÔÚµ±Ç°Ä¿Â¼ÏÂ´´½¨Ö¸¶¨ÎÄ¼ş\n");
-	printf("rm\t\tÎÄ¼şÃû\t\t\tÔÚµ±Ç°Ä¿Â¼ÏÂÉ¾³ıÖ¸¶¨ÎÄ¼ş\n");
-	printf("open\t\tÎÄ¼şÃû\t\t\tÔÚµ±Ç°Ä¿Â¼ÏÂ´ò¿ªÖ¸¶¨ÎÄ¼ş\n");
-	printf("write\t\tfd\t\t\tÔÚ´ò¿ªÎÄ¼ş×´Ì¬ÏÂ£¬Ğ´¸ÃÎÄ¼ş\n");
-	printf("read\t\tfd\t\t\tÔÚ´ò¿ªÎÄ¼ş×´Ì¬ÏÂ£¬¶ÁÈ¡¸ÃÎÄ¼ş\n");
-	printf("close\t\tfd\t\t\tÔÚ´ò¿ªÎÄ¼ş×´Ì¬ÏÂ£¬¹Ø±Õ¸ÃÎÄ¼ş\n");
-	printf("help\t\tÎŞ\t\t\t²é¿´°ïÖú\n");
-	printf("sf\t\tÎŞ\t\t\t²é¿´´ò¿ªÎÄ¼ş\n");
-	printf("format\t\tÎŞ\t\t\t¸ñÊ½»¯ÎÄ¼şÏµÍ³\n");
-	printf("exit\t\tÎŞ\t\t\tÍË³öÏµÍ³\n\n");
+	printf("å‘½ä»¤å\t\tå‘½ä»¤å‚æ•°\t\tå‘½ä»¤è¯´æ˜\n\n");
+	printf("cd\t\tç›®å½•å(è·¯å¾„å)\t\tåˆ‡æ¢å½“å‰ç›®å½•åˆ°æŒ‡å®šç›®å½•\n");
+	printf("mkdir\t\tç›®å½•å\t\t\tåœ¨å½“å‰ç›®å½•åˆ›å»ºæ–°ç›®å½•\n");
+	printf("rmdir\t\tç›®å½•å\t\t\tåœ¨å½“å‰ç›®å½•åˆ é™¤æŒ‡å®šç›®å½•\n");
+	printf("ls\t\tæ— \t\t\tæ˜¾ç¤ºå½“å‰ç›®å½•ä¸‹çš„ç›®å½•å’Œæ–‡ä»¶\n");
+	printf("create\t\tæ–‡ä»¶å\t\t\tåœ¨å½“å‰ç›®å½•ä¸‹åˆ›å»ºæŒ‡å®šæ–‡ä»¶\n");
+	printf("rm\t\tæ–‡ä»¶å\t\t\tåœ¨å½“å‰ç›®å½•ä¸‹åˆ é™¤æŒ‡å®šæ–‡ä»¶\n");
+	printf("open\t\tæ–‡ä»¶å\t\t\tåœ¨å½“å‰ç›®å½•ä¸‹æ‰“å¼€æŒ‡å®šæ–‡ä»¶\n");
+	printf("write\t\tfd\t\t\tåœ¨æ‰“å¼€æ–‡ä»¶çŠ¶æ€ä¸‹ï¼Œå†™è¯¥æ–‡ä»¶\n");
+	printf("read\t\tfd\t\t\tåœ¨æ‰“å¼€æ–‡ä»¶çŠ¶æ€ä¸‹ï¼Œè¯»å–è¯¥æ–‡ä»¶\n");
+	printf("close\t\tfd\t\t\tåœ¨æ‰“å¼€æ–‡ä»¶çŠ¶æ€ä¸‹ï¼Œå…³é—­è¯¥æ–‡ä»¶\n");
+	printf("help\t\tæ— \t\t\tæŸ¥çœ‹å¸®åŠ©\n");
+	printf("sf\t\tæ— \t\t\tæŸ¥çœ‹æ‰“å¼€æ–‡ä»¶\n");
+	printf("format\t\tæ— \t\t\tæ ¼å¼åŒ–æ–‡ä»¶ç³»ç»Ÿ\n");
+	printf("exit\t\tæ— \t\t\té€€å‡ºç³»ç»Ÿ\n\n");
 	printf("***************************************************************\n");
 }
 
