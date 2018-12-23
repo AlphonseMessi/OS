@@ -1,0 +1,10 @@
+﻿  FileSystem.cpp
+e:\os-file\filesystem\filesystem\filesystem.cpp(3): warning C4005: “_CRT_SECURE_NO_WARNINGS”: 宏重定义
+  e:\os-file\filesystem\filesystem\filesystem.cpp(3): note: 命令行参数: 参见前面的“_CRT_SECURE_NO_WARNINGS”定义
+e:\os-file\filesystem\filesystem\filesystem.cpp(3): warning C4603: “_CRT_SECURE_NO_WARNINGS”: 未定义宏或在预编译头使用后定义发生改变
+  e:\os-file\filesystem\filesystem\filesystem.cpp(3): note: 将宏添加到预编译头中，而不是在此处定义
+  e:\os-file\filesystem\filesystem\filesystem.cpp(4): note: 使用预编译头
+e:\os-file\filesystem\filesystem\filesystem.cpp(273): warning C4101: “now”: 未引用的局部变量
+e:\os-file\filesystem\filesystem\filesystem.cpp(274): warning C4101: “nowtime”: 未引用的局部变量
+e:\os-file\filesystem\filesystem\filesystem.cpp(598): warning C4101: “dirfcb”: 未引用的局部变量
+  FileSystem.vcxproj -> E:\OS-File\FileSystem\Debug\FileSystem.exe
