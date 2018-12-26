@@ -429,7 +429,7 @@ int fat_read(unsigned short id, unsigned char *text, int offset, int len) {
 }
 
 int do_read(int fd, unsigned char *text, int len) {
-	// 从一个已打开目录文件找到对应名称的文件夹fcb，用于一些不断递归打开文件夹的函数中 
+	 // 得到某个长度在某个fat中的对应的盘块号和偏移量，用来记录一个打开文件项在其父目录对应fat的位置
 	int blockorder = openfilelist[fd].count >> 10;
 	int blockoffset = openfilelist[fd].count % 1024;
 	unsigned short id = openfilelist[fd].open_fcb.first;
