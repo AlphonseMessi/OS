@@ -386,7 +386,7 @@ int rewrite_dir(char *dir) {
 	int len = strlen(dir);
 	if (dir[len - 1] == '/') --len;
 	int pre = -1;
-	for (int i = 0; i < len; ++i) if (dir[len] == '/') {
+	for (int i = 1; i < len; i++) if (dir[len] == '/') {
 		if (pre != -1) {
 			if (pre + 1 == i) {
 				printf("rewrite_dir: %s is invaild, please check!\n", dir);
