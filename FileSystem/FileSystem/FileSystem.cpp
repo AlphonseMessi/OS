@@ -373,9 +373,10 @@ void splitLastDir(char *dir, char new_dir[2][DIRLEN]) {
 }
 
 void getPos(int *id, int *offset, unsigned short first, int length) {
-	int blockorder = length >> 10;
+	int blockorder = length >> 10;//用了几个磁盘块
 	*offset = length % 1024;
 	*id = first;
+	//找到该长度在fat中最后一个磁盘块的ID 
 	while (blockorder) {
 		--blockorder;
 		*id = fat1[*id].id;
