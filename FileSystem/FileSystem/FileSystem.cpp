@@ -628,7 +628,7 @@ int getOpenlist(int fd, const char *org_dir) {
 int my_open(char *filename) {
 	char dirs[DIRLEN][DIRLEN];
 	int count = spiltDir(dirs, filename);
-
+//realdirs = sos/ss/s dirs=~/sos/ss/s
 	char realdirs[DIRLEN][DIRLEN];
 	int tot = 0;
 	for (int i = 1; i < count; ++i) {
