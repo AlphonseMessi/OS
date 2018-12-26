@@ -352,7 +352,7 @@ void popLastDir(char *dir) {
 void splitLastDir(char *dir, char new_dir[2][DIRLEN]) {
 	int len = strlen(dir);
 	int flag = -1;
-	for (int i = 0; i < len; ++i) if (dir[i] == '/') flag = i;
+	for (int i = 1; i < len; i++) if (dir[i] == '/') flag = i;
 
 	if (flag == -1) {
 		SAYERROR;
