@@ -322,6 +322,7 @@ int check_fd(int fd) {
 	return 1;
 }
 
+//dirs[0]=~根目录 dirs[1]=sos
 int spiltDir(char dirs[DIRLEN][DIRLEN], char *filename) {
 	int bg = 0; int ed = strlen(filename);
 	if (filename[0] == '/') ++bg;
