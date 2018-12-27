@@ -58,7 +58,7 @@ typedef struct BLOCK0 {
 	unsigned char *startblock;
 } block0;
 
-// utils
+
 // 这里是一些基础的函数，都是一些会重复利用的操作
 
 // 根据所给的参数对fcb进行初始化
@@ -86,7 +86,7 @@ void getPos(int *id, int *offset, unsigned short first, int length);
 // 把路径规范化并检查
 int rewrite_dir(char *dir);
 
-// basics
+// 基本函数
 // 根据盘块号和偏移量，直接从FAT上读取指定长度的信息
 int fat_read(unsigned short id, unsigned char *text, int offset, int len);
 // 读取某个已打开文件的指定长度信息
@@ -130,7 +130,7 @@ int my_create(char *filename);
 // 调用touch创建出一个文件夹
 void my_mkdir(char *dirname);
 
-//others
+//其他函数
 // 启动系统，做好相关的初始化
 void startsys();
 // 退出系统，做好相应备份工作
@@ -832,10 +832,6 @@ void my_format() {
 	fcb root;
 	fcb_init(&root, ".", 5, 0);
 	memcpy(blockaddr[5], &root, sizeof(fcb));
-
-
-	strcpy(root.filename, "..");
-	memcpy(blockaddr[5] + sizeof(fcb), &root, sizeof(fcb));
 
 	printf("初始化完成\n");
 }
