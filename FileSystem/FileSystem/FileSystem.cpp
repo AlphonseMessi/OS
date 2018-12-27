@@ -454,8 +454,8 @@ int fat_write(unsigned short id, unsigned char *text, int blockoffset, int len) 
 		if (tlen <= 1024 - toffset) break;
 		tlen -= (1024 - toffset);
 		toffset = 0;
-		id = getNextFat(id);
-		if (id == END) {
+		tid = getNextFat(tid);
+		if (tid == END) {
 			SAYERROR;
 			printf("fat_write: no next fat\n");
 			return -1;
