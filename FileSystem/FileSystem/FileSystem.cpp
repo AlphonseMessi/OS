@@ -799,7 +799,7 @@ void my_rmdir(char *dirname) {
 			++cnt;
 		}
 
-		if (cnt > 2) {
+		if (cnt > 1) {
 			my_close(fd);
 			printf("my_rmdir: %s is not empty\n", dirname);
 			return;
