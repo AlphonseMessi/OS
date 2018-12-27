@@ -502,7 +502,7 @@ int do_write(int fd, unsigned char *text, int len) {
 		memcpy(blockaddr[fcbp->first], &tmp, sizeof(fcb));
 
 		
-
+/*
 		// 从磁盘中读出当前目录的信息
 		unsigned char buf[SIZE];
 		int read_size = read_ls(fd, buf, fcbp->length);
@@ -516,7 +516,7 @@ int do_write(int fd, unsigned char *text, int len) {
 			memcpy(&dirfcb, buf + i, sizeof(fcb));
 			if (dirfcb.free || dirfcb.attribute) continue;
 			memcpy(blockaddr[dirfcb.first] + sizeof(fcb), &tmp, sizeof(fcb));
-		}
+		}*/
 	}
 
 	return ret;
