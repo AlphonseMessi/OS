@@ -532,7 +532,7 @@ int getFcb(fcb* fcbp, int *dirno, int *diroff, int fd, const char *dir) {
 
 	useropen *file = &openfilelist[fd];
 
-	// 从磁盘中读出当前目录的信息
+	// 从磁盘中读出fd用户打开文件表的文件夹下的所有信息
 	unsigned char *buf = (unsigned char *)malloc(SIZE);
 	int read_size = read_ls(fd, buf, file->open_fcb.length);
 	if (read_size == -1) {
@@ -591,6 +591,7 @@ int getOpenlist(int fd, const char *org_dir) {
 	fcb dirfcb;
 	useropen *file = &openfilelist[fileid];
 	int ret;
+	//创立一个根目录~/的用户打开文件项
 	if (fd == -1) {
 		ret = getFcb(&file->open_fcb, &file->dirno, &file->diroff, -1, ".");
 	}
