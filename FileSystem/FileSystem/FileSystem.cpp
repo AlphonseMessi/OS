@@ -983,9 +983,7 @@ void startsys() {
 	// 把根目录fcb放入打开文件表中，设定当前目录为根目录
 	curdirid = 0;
 	memcpy(&openfilelist[curdirid].open_fcb, blockaddr[5], sizeof(fcb));
-#ifdef DEBUG_INFO
-	printf("starsys: %s\n", openfilelist[curdirid].open_fcb.filename);
-#endif // DEBUG_INFO
+
 	useropen_init(&openfilelist[curdirid], 5, 0, "~/");
 }
 
