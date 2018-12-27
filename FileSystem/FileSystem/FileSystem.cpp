@@ -508,11 +508,7 @@ int do_write(int fd, unsigned char *text, int len) {
 		strcpy(tmp.filename, ".");
 		memcpy(blockaddr[fcbp->first], &tmp, sizeof(fcb));
 
-		// 如果是根目录的话，".."也要被修改
-		strcpy(tmp.filename, "..");
-		if (fcbp->first == 5) {
-			memcpy(blockaddr[fcbp->first] + sizeof(fcb), &tmp, sizeof(fcb));
-		}
+		
 
 		// 从磁盘中读出当前目录的信息
 		unsigned char buf[SIZE];
