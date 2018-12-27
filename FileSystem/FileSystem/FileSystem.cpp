@@ -843,16 +843,9 @@ void my_format() {
 	fcb_init(&root, ".", 5, 0);
 	memcpy(blockaddr[5], &root, sizeof(fcb));
 
-#ifdef DEBUG_INFO
-	printf("my_format %s\n", root.filename);
-#endif // DEBUG_INFO
 
 	strcpy(root.filename, "..");
 	memcpy(blockaddr[5] + sizeof(fcb), &root, sizeof(fcb));
-
-#ifdef DEBUG_INFO
-	printf("my_format %s\n", root.filename);
-#endif // DEBUG_INFO
 
 	printf("初始化完成\n");
 }
@@ -949,8 +942,7 @@ void my_mkdir(char *dirname) {
 	strcpy(dirfcb.filename, ".");
 	memcpy(blockaddr[fatid], &dirfcb, sizeof(fcb));
 	memcpy(&dirfcb, &openfilelist[pafd].open_fcb, sizeof(fcb));
-	strcpy(dirfcb.filename, "..");
-	memcpy(blockaddr[fatid] + sizeof(fcb), &dirfcb, sizeof(fcb));
+	
 
 	my_close(pafd);
 	my_close(fd);
