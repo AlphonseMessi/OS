@@ -848,7 +848,7 @@ int my_touch(char *filename, int attribute, int *rpafd) {
 		return -1;
 	}
 
-	// 从磁盘中读出当前目录的信息，进行检查
+	// 从磁盘中读出上级目录的信息，进行检查，即mkdir /skr/skrr 就要通过下面的代码读取到 ~/skr的信息
 	unsigned char *buf = (unsigned char*)malloc(SIZE);
 	int read_size = read_ls(pafd, buf, openfilelist[pafd].open_fcb.length);
 	if (read_size == -1) {
