@@ -255,14 +255,7 @@ int main() {
 		}
 		my_reload(curdirid);
 		printf("%s: %s$ ", USERNAME, openfilelist[curdirid].dir);
-/*
-		memcpy(blockaddr[0], &initblock, sizeof(initblock));
-		memcpy(blockaddr[1], fat1, sizeof(fat1));
-		memcpy(blockaddr[3], fat1, sizeof(fat1));
-		FILE *fp = fopen("myfsys", "wb");
-		fwrite(myvhard, BLOCKSIZE, BLOCKNUM, fp);
-		fclose(fp);
-		*/
+
 	}
 
 	my_exitsys();
