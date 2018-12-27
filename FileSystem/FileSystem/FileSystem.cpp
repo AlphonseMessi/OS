@@ -501,22 +501,6 @@ int do_write(int fd, unsigned char *text, int len) {
 		strcpy(tmp.filename, ".");
 		memcpy(blockaddr[fcbp->first], &tmp, sizeof(fcb));
 
-		
-/*
-		// 从磁盘中读出当前目录的信息
-		unsigned char buf[SIZE];
-		int read_size = read_ls(fd, buf, fcbp->length);
-		if (read_size == -1) {
-			SAYERROR;
-			printf("do_write: read_ls error\n");
-			return 0;
-		}
-		fcb dirfcb;
-		for (int i = 2 * sizeof(fcb); i < read_size; i += sizeof(fcb)) {
-			memcpy(&dirfcb, buf + i, sizeof(fcb));
-			if (dirfcb.free || dirfcb.attribute) continue;
-			memcpy(blockaddr[dirfcb.first] + sizeof(fcb), &tmp, sizeof(fcb));
-		}*/
 	}
 
 	return ret;
