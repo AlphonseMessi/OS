@@ -911,7 +911,7 @@ void my_mkdir(char *dirname) {
 	int fatid = dirfcb.first;
 	strcpy(dirfcb.filename, ".");
 	memcpy(blockaddr[fatid], &dirfcb, sizeof(fcb));
-	memcpy(&dirfcb, &openfilelist[pafd].open_fcb, sizeof(fcb));
+	
 	
 
 	my_close(pafd);
