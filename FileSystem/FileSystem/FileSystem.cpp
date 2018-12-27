@@ -493,8 +493,8 @@ int do_write(int fd, unsigned char *text, int len) {
 
 	fcbp->length += ret;
 	openfilelist[fd].fcbstate = 1;
-	// 如果文件夹被写了，那么其'.'也要被写进去
-	// 其子文件夹的'..'也要被更新
+	// 用于文件夹的创建 ，将.目录项放入创建的文件夹内
+	
 	if (!fcbp->attribute) {
 		fcb tmp;
 		memcpy(&tmp, fcbp, sizeof(fcb));
