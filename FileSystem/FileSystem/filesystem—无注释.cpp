@@ -157,7 +157,7 @@ int main() {
 
 	
 	int fd;
-	char command[DIRLEN << 1];
+	char command[DIRLEN];
 	printf("File System ver 1.0 by ssd.\n");
 	printf("***************************************************************\n");
 	printf("命令名\t\t命令参数\t\t命令说明\n\n");
